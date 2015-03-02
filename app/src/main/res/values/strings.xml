@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Grid Gallery</string>
+    <string name="search">Search</string>
+    <string name="search_hint">Search for images</string>
+    <string name="enter_some_text">Please enter some search keywords</string>
+    <string name="loading">Loading images</string>
+</resources>
