@@ -5,11 +5,14 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -88,6 +91,7 @@ public class ImageGridFragment extends Fragment implements
         if (mGridAdapter == null)
             mGridAdapter = new GridAdapter(getActivity());
 
+        // setup the grid view
         mGridView = (GridView) rootView.findViewById(R.id.gridView);
         mGridView.setAdapter(mGridAdapter);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -103,7 +107,7 @@ public class ImageGridFragment extends Fragment implements
             }
         });
         mGridView.setOnScrollListener(this);
-
+        mGridView.setNumColumns(getNumColumns());
 
         return rootView;
     }
@@ -195,7 +199,7 @@ public class ImageGridFragment extends Fragment implements
     private void search(String searchString) {
         if (TextUtils.isEmpty(searchString)) {
             Toast.makeText(getActivity(),
-                    getActivity().getResources().getString(R.string.enter_some_text),
+                    getResources().getString(R.string.enter_some_text),
                     Toast.LENGTH_SHORT).show();
             return;
         }
@@ -205,7 +209,7 @@ public class ImageGridFragment extends Fragment implements
 
         if (!Constants.SHOW_SPINNER)
             Toast.makeText(getActivity(),
-                    getActivity().getResources().getString(R.string.loading),
+                    getResources().getString(R.string.loading),
                     Toast.LENGTH_LONG).show();
 
         isLoading(true);
@@ -224,6 +228,24 @@ public class ImageGridFragment extends Fragment implements
         InputMethodManager imm = (InputMethodManager)
                 getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(mEditTextSearch.getWindowToken(), 0);
+    }
+
+    /**
+     * A convenience method to determine the number of columns to show in the grid view.
+     *
+     * @return
+     */
+    private int getNumColumns() {
+        WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+
+        Point size = new Point();
+        display.getSize(size);
+
+        float scale = getResources().getDisplayMetrics().density * 175;
+        int columns = (int) ((float) size.x / scale);
+
+        return columns;
     }
 
     /**
